@@ -51,6 +51,9 @@ def tweetFormatter(tweet: json) -> json:
     council = location["municipality"] if "municipality" in location else ""
     postcode = location["postcode"] if "postcode" in location else ""
     suburb = location["suburb"] if "suburb" in location else ""
+    coordinates = tweet["geo"]["coordinates"]
+    coordinates[0] = str(coordinates[0])
+    coordinates[1] = str(coordinates[1])
 
     sqlInsert = {
         "_id": tweet["_id"] or tweet["id"],
@@ -59,7 +62,8 @@ def tweetFormatter(tweet: json) -> json:
         "mentionCrime": crime,
         "council": council,
         "postcode": postcode,
-        "suburb": suburb
+        "suburb": suburb,
+        "geo": coordinates
     }
     return sqlInsert
 
@@ -68,7 +72,12 @@ def processTweet(tweet, db):
     if tweet["geo"] and tweetValidator(tweet):  # Else ignore
         dbInsert = tweetFormatter(tweet)
         try:
-            db.save(dbInsert)
+            if tweet["_id"] in db:
+                doc = db.get(tweet["_id"])
+                doc["geo"] = dbInsert["geo"]
+                db.save(doc)
+            else:
+                db.save(dbInsert)
         except NameError:
             print("Matching id found")
 
@@ -122,7 +131,5 @@ if __name__ == "__main__":
                 if tweetValidator(tweet):  # Else ignore
                     processTweet(tweet, db)
 
-# API KEY yHuHB7gB4J4npxCRM8PHLJEmL
-# API SECRET PPc15NKLjPKlUV2SHJzKxJUEbpgHEKyPRggyRoaHfIgAvCeQSJ DONT CHECK IN
 # BEARER TOKEN
 # AAAAAAAAAAAAAAAAAAAAAFIObwEAAAAAm%2BkVcGvN3leXCC1B85puJEY6Yhc%3D0s9PQRynu9vaMVsUKpGtaQTpiN0TloMti6e7UhQTBkp2tttrsc
