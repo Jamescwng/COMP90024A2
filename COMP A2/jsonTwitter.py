@@ -24,20 +24,6 @@ def surburbGetter(tweet: json) -> str:
 
 
 def typeCrime(text: str):
-    ## Derived from
-    # https://www.crimestatistics.vic.gov.au/about-the-data/classifications-and-victorian-map-boundaries/offence-classification
-
-    # crimeList = [
-    #     "crime", "robb", "stabb", "drug", "assault",
-    # ]
-    # crimeMention = ""
-    # text = text.lower()
-    # for crime in crimeList:
-    #     if crime in text:
-    #         crimeMention += (crime + "|")
-    #
-    # if crimeMention == "":
-    #     return None
     if "crime" in text.lower():
         return True
     return False
@@ -58,6 +44,9 @@ def tweetFormatter(tweet: json) -> json:
     council = location["municipality"] if "municipality" in location else ""
     postcode = location["postcode"] if "postcode" in location else ""
     suburb = location["suburb"] if "suburb" in location else ""
+    coordinates = tweet["geo"]["coordinates"]
+    coordinates[0] = str(coordinates[0])
+    coordinates[1] = str(coordinates[1])
 
     sqlInsert = {
         "_id": tweet["_id"] or tweet["id"],
@@ -66,7 +55,8 @@ def tweetFormatter(tweet: json) -> json:
         "mentionCrime": crime,
         "council": council,
         "postcode": postcode,
-        "suburb": suburb
+        "suburb": suburb,
+        "geo": coordinates
     }
     return sqlInsert
 
@@ -76,7 +66,12 @@ def processTweet(listTweet, db):
         if row["geo"] and tweetValidator(row):  # Else ignore
             dbInsert = tweetFormatter(row)
             try:
-                db.save(dbInsert)
+                if row["_id"] in db:
+                    doc = db.get(row["_id"])
+                    doc["geo"] = dbInsert["geo"]
+                    db.save(doc)
+                else:
+                    db.save(dbInsert)
             except NameError:
                 print("Matching id found")
                 continue
@@ -93,12 +88,11 @@ def main():
     # MultiProcessing (Load it up with a chunk because overhead is high)
     num_thread = int(multiprocessing.cpu_count())
     pool = ThreadPool(num_thread)
-    result = pool.apply_async(processTweet, args=(ijson.items(tweet_json_file, 'rows.item.doc'), db))
+    result = pool.apply(processTweet, args=(ijson.items(tweet_json_file, 'rows.item.doc'), db))
     results.append(result)
     [result.wait() for result in results]
 
 
 if __name__ == '__main__':
     # Start time
-
     main()

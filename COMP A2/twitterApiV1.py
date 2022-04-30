@@ -1,7 +1,9 @@
 import json
 import os
+import sys
+
 import couchdb
-from tweepy import Client, HTTPException, TooManyRequests
+from tweepy import API, HTTPException, TooManyRequests, OAuthHandler
 from geopy.geocoders import Nominatim
 import time
 
@@ -10,16 +12,14 @@ twitter_bearer_token = os.getenv("TWITTER_BEARER_TOKEN")
 if not twitter_bearer_token:
     raise RuntimeError("Not found bearer token")
 
-client = Client(twitter_bearer_token)
-
 
 def surburbGetter(tweet: json) -> str:
     area = ""
     # Get suburb by geographical location
     # Extract geocode
-    if tweet["geo"]:
+    if tweet.geo:
         locator = Nominatim(user_agent="cloud project")
-        geo = tweet["geo"]["coordinates"]
+        geo = tweet.geo["coordinates"]
         # Twitter is long/lat, nominatim is lat/long
         coordinates = (geo[0], geo[1])
         location = locator.reverse(coordinates)
@@ -35,7 +35,7 @@ def typeCrime(text: str):
 
 
 def tweetValidator(tweet: json) -> bool:
-    text = tweet["text"]
+    text = tweet.text
     if text is None:
         return False
     if text.startswith("RT"):
@@ -45,28 +45,37 @@ def tweetValidator(tweet: json) -> bool:
 
 def tweetFormatter(tweet: json) -> json:
     location = surburbGetter(tweet)
-    crime = typeCrime(tweet["text"])
+    crime = typeCrime(tweet.text)
     council = location["municipality"] if "municipality" in location else ""
     postcode = location["postcode"] if "postcode" in location else ""
     suburb = location["suburb"] if "suburb" in location else ""
+    coordinates = tweet.geo["coordinates"]
+    coordinates[0] = str(coordinates[0])
+    coordinates[1] = str(coordinates[1])
 
     sqlInsert = {
-        "_id": tweet["_id"] or tweet["id"],
-        "tweet": tweet["text"],
-        "created_at": tweet["created_at"],
+        "_id": tweet.id_str,
+        "tweet": tweet.text,
+        "created_at": tweet.created_at.strftime("%a %b %d %X +0000 %Y"),
         "mentionCrime": crime,
         "council": council,
         "postcode": postcode,
-        "suburb": suburb
+        "suburb": suburb,
+        "geo": coordinates
     }
     return sqlInsert
 
 
 def processTweet(tweet, db):
-    if tweet["geo"] and tweetValidator(tweet):  # Else ignore
+    if tweet.geo and tweetValidator(tweet):  # Else ignore
         dbInsert = tweetFormatter(tweet)
         try:
-            db.save(dbInsert)
+            if tweet.id_str in db:
+                doc = db.get(tweet.id)
+                doc["geo"] = dbInsert["geo"]
+                db.save(doc)
+            else:
+                db.save(dbInsert)
         except NameError:
             print("Matching id found")
 
@@ -83,34 +92,46 @@ if __name__ == "__main__":
     db = couch['twitter']  # existing
 
     # https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
-    query = 'melbourne -is:retweet'
+    with open(sys.argv[1], 'r', encoding="utf8") as f:
+        query = f.read().rstrip()
+
+    auth = OAuthHandler("ZHhedTWScKB6LwbEi5sNiV3YA", "d6hoBcuWKe4lriLTa53aCWeDmDLDpQlHAZop0SCtgQydN9H6Rn")
+
+    auth.set_access_token("1480793806551191554-TJw4qDyY4VkEEq5sHD7IEIIXHHzlZS",
+                          "q7r3iKRxiKmSIPqTzJTQnYQ8gSE9vyF8Z1SrMFwhcWKWJ")
+
+    api = API(auth, wait_on_rate_limit=True)
 
     max_results = 10
     limit = 30
     counter = 0
     resp = None
+    search_words = query
+    date_since = "202001011200"
 
     # https://docs.tweepy.org/en/stable/client.html#search-tweets\
     while resp is None:
         try:
-            resp = client.search_recent_tweets(query, max_results=max_results)
+
+            resp = api.search_full_archive(label="dev", query=query, maxResults=max_results)
         except TooManyRequests:
             # timeout so wait 5 mins
             time.sleep(300)
 
-    if resp.errors:
+    if "errors" in resp:
         raise RuntimeError(resp.errors)
-    if resp.data:
-        for tweet in resp.data:
+    if resp:
+        for tweet in resp:
             if tweetValidator(tweet):  # Else ignore
                 processTweet(tweet, db)
 
     while "next_token" in resp.meta and counter < limit:
         try:
-            resp = client.search_recent_tweets(query, max_results=max_results, next_token=resp.meta["next_token"])
+            resp = api.search_full_archive(label="dev", query=query, maxResults=max_results, next_token=resp.meta["next_token"])
         except TooManyRequests:
             # timeout so wait 5 mins
             time.sleep(300)
+            continue
         if resp.errors:
             raise RuntimeError(resp.errors)
         if resp.data:
@@ -118,7 +139,5 @@ if __name__ == "__main__":
                 if tweetValidator(tweet):  # Else ignore
                     processTweet(tweet, db)
 
-# API KEY yHuHB7gB4J4npxCRM8PHLJEmL
-# API SECRET PPc15NKLjPKlUV2SHJzKxJUEbpgHEKyPRggyRoaHfIgAvCeQSJ DONT CHECK IN
 # BEARER TOKEN
 # AAAAAAAAAAAAAAAAAAAAAFIObwEAAAAAm%2BkVcGvN3leXCC1B85puJEY6Yhc%3D0s9PQRynu9vaMVsUKpGtaQTpiN0TloMti6e7UhQTBkp2tttrsc

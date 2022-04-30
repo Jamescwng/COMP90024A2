@@ -1,1 +1,1 @@
-melbourne -is:retweet
+"a" bounding_box:[144.705048 -37.872685 144.993439 -37.659906]
