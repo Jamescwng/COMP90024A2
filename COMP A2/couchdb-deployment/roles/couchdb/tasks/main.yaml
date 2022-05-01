@@ -1,0 +1,66 @@
+---
+- name: Create couchdb container
+  become: yes
+  docker_container:
+    name: 'couchdb{{ ansible_ssh_host }}'
+    image: 'ibmcom/couchdb3:{{ VERSION }}'
+    state: started
+    ports:
+      - "4369:4369"
+      - "5984:5984"
+      - "9100-9200:9100-9200"
+    env:
+      COUCHDB_USER: '{{ user }}'
+      COUCHDB_PASSWORD: '{{ pass }}'
+      COUCHDB_SECRET: '{{ cookie }}'
+      NODENAME: '{{ ansible_ssh_host }}'
+      ERL_FLAGS: "-setcookie {{ cookie }}"
+
+- name: Cluster setup
+  uri:
+    url: http://{{ masternode }}:5984/_cluster_setup
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: POST
+    body: "{
+            \"action\": \"enable_cluster\", \"bind_address\": \"0.0.0.0\",
+            \"username\": \"{{ user }}\", \"password\": \"{{ pass }}\", \"port\": \"5984\",
+            \"remote_node\": \"{{ ansible_ssh_host }}\", \"node_count\": \"{{ nnodes }}\",
+            \"remote_current_user\": \"{{ user }}\", \"remote_current_password\": \"{{ pass }}\"
+            }"
+    body_format: json
+    status_code: [200, 201]
+    return_content: true
+    headers:
+      Content-Type: "application/json"
+    force_basic_auth: yes
+  when: ansible_ssh_host != masternode
+  register: setup
+
+- ansible.builtin.debug:
+    msg: '{{ setup }}'
+  when: setup is defined
+
+- name: Add node
+  uri:
+    url: http://{{ masternode }}:5984/_cluster_setup
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: POST
+    body: "{
+              \"action\": \"add_node\", \"host\":\"{{ ansible_ssh_host }}\",\
+              \"port\": \"5984\", \"username\": \"{{ user }}\", \"password\":\"{{ pass }}\"
+            }"
+    body_format: json
+    status_code: [200, 201]
+    return_content: true
+    headers:
+      Content-Type: "application/json"
+    force_basic_auth: yes
+  when: ansible_ssh_host != masternode
+  register: node
+
+- ansible.builtin.debug:
+    msg: '{{ node }}'
+  when: node is defined
+  

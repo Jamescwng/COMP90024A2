@@ -1,0 +1,7 @@
+#!/bin/sh
+
+user={{ user }}
+pass={{ pass }}
+node={{ ansible_ssh_host }}
+
+curl -X GET "http://${user}:${pass}@${node}:5984/_membership"
