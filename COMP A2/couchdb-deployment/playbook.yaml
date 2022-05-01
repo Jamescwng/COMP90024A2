@@ -1,0 +1,53 @@
+- hosts: db1
+  vars_files:
+    - variables/vars.yaml
+  gather_facts: true
+
+  roles:
+    - role: common
+    - role: docker
+    - role: couchdb
+
+- hosts: db2
+  vars_files:
+    - variables/vars.yaml
+  gather_facts: true
+
+  roles:
+    - role: common
+    - role: docker
+    - role: couchdb
+
+- hosts: db3
+  vars_files:
+    - variables/vars.yaml
+  gather_facts: true
+
+  roles:
+    - role: common
+    - role: docker
+    - role: couchdb
+
+- hosts: db1
+  vars_files:
+    - variables/vars.yaml
+  gather_facts: true
+
+  roles:
+    - role: cluster-configuration
+
+- hosts: db2
+  vars_files:
+    - variables/vars.yaml
+  gather_facts: true
+
+  roles:
+    - role: cluster-configuration
+
+- hosts: db3
+  vars_files:
+    - variables/vars.yaml
+  gather_facts: true
+
+  roles:
+    - role: cluster-configuration

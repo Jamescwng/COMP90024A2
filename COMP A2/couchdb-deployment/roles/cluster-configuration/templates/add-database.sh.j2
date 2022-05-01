@@ -1,0 +1,7 @@
+#!/bin/sh
+
+user={{ user }}
+pass={{ pass }}
+masternode={{ masternode }}
+
+curl -XPUT "http://${user}:${pass}@${masternode}:5984/twitter"

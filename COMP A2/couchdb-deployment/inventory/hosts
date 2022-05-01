@@ -1,0 +1,16 @@
+[db1]
+172.26.134.187
+
+[db2]
+203.101.230.197
+
+[db3]
+172.26.130.3
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=ubuntu
+ansible_ssh_private_key_file=/Users/emmanuelpinca/.ssh/db_key.pem
+
+masternode=172.26.134.187
+nnodes=3
