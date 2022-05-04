@@ -14,6 +14,7 @@ db = couchserver['twitter']
 rows = db.view('_design/CrimeInfo/_view/GeoData')
 
 data = [row['value'] for row in rows]
+random.seed(0)
 random.shuffle(data)
 
 MELB_COORDINATES = (-37.810612, 144.963954)
@@ -40,3 +41,5 @@ def index():
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
+
+#https://stackoverflow.com/questions/51025893/flask-at-first-run-do-not-use-the-development-server-in-a-production-environmen

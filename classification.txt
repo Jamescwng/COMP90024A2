@@ -1,0 +1,168 @@
+kvsymons and I getting our spring inspiration on #msfw #humpday #melbourne #spring @ Melbourne Town Hall http://t.co/XYizu6osQ0
+{'label': 'POS', 'score': 0.9290478229522705}
+
+I can see children in here#immigration
+{'label': 'NEU', 'score': 0.9348700046539307}
+
+fanfannn my baee i miss yoou ;; http://t.co/BGDaoqFYqk
+{'label': 'POS', 'score': 0.6167014241218567}
+
+One to remember...... @ http://t.co/TBsJp4wG1J http://t.co/yCNsnPFOmv
+{'label': 'NEU', 'score': 0.8860759139060974}
+
+Talking to my best friend always makes me feel alot better @MlAVANESSA  💕💕💕
+{'label': 'POS', 'score': 0.9922892451286316}
+
+It's only Monday and I'm already moping around 🏃 #hatethetaper #trailrunning #scc100km #hurryupsaturday
+{'label': 'NEG', 'score': 0.949555516242981}
+
+The sun comes up way way way too early in Melbourne. Make it go away please. @ Queen St http://t.co/F4K1EZPYWV
+{'label': 'NEG', 'score': 0.9789591431617737}
+
+@lisaphamxo I AM LITERALLY TRYING SO HARD TO FIND SOMEONE TO GET ME A VIDEO FROM LEIGHTON TOMORROW
+{'label': 'NEU', 'score': 0.5385440587997437}
+
+'stereo' &amp; 'springvale' are now trending in #Melbourne http://t.co/V1EvVfTorv
+{'label': 'NEU', 'score': 0.9394035935401917}
+
+#currentlyreading 'Love Thy Neighbor (Friend-Zoned)' by @BelleAurora1
+{'label': 'NEU', 'score': 0.5854091048240662}
+
+@ferretimp Thanks Adam. 😊
+{'label': 'NEU', 'score': 0.830785870552063}
+
+@MelRivers @Joan_Rivers speedy recovery to you Joan. Sending you lots of love from Melbourne. Praying for a speedy recovery.
+{'label': 'POS', 'score': 0.9876499772071838}
+
+Ice creaaaaaammmmmm!!!! (with @destyaprathita and @nienakr at @gelato_messina) — https://t.co/H3p3zsQpVJ
+{'label': 'POS', 'score': 0.8491811752319336}
+
+The fact that my office has bean bags ... Seriously relaxing man ... I need to get one for home haha
+{'label': 'POS', 'score': 0.988815426826477}
+
+Hands down my favourite Cosby Show themed burger joint in Melbourne @ Huxtaburger http://t.co/1B9DiPnsDY
+{'label': 'POS', 'score': 0.9740368723869324}
+
+Anyone buy me scoot tickets to Singapore? $330 return . even cheaper if I don't take check in baggage.
+{'label': 'NEU', 'score': 0.803362250328064}
+
+@Joe_Sugg "it's not such a bad thing to fall in love with meee" I swear it's not 😂
+{'label': 'POS', 'score': 0.5559536814689636}
+
+@PoppaKris @Alvarez1Daniel @nathana_pump pondie kun
+{'label': 'NEU', 'score': 0.9802276492118835}
+
+@GeorginaTseros clean your room or something!
+{'label': 'NEG', 'score': 0.6679993867874146}
+
+Super proud of our team who have polled. Onward and upward crew!
+{'label': 'POS', 'score': 0.9922806620597839}
+
+@clarrinexx I DID :D ALL BY MYSELF SOMEMORE
+{'label': 'POS', 'score': 0.9256728291511536}
+
+The Vivian Maier exhibition is very popular! On until the 26th Oct. :) (@ Center For Contemporary Photography) https://t.co/fAUO0HGBci
+{'label': 'POS', 'score': 0.9730401039123535}
+
+@iamitoken @ayaaaa_1228 
+だまらっしゃい
+田中の姉貴に言った
+{'label': 'NEU', 'score': 0.9693629145622253}
+
+Breakfast and sunshine in Melbourne ☺
+{'label': 'POS', 'score': 0.5997415781021118}
+
+@fadhilzonis2 yeah sure night from aussie too :)
+{'label': 'POS', 'score': 0.7855920791625977}
+
+.@KevinAndrewsMP going to #WCoF "because it is about families", perhaps he should go to some @AMEQUALITY meetings too
+http://t.co/Em109u2Ofs
+{'label': 'NEU', 'score': 0.921301007270813}
+
+APOLOGY - there are 3 separate protests
+{'label': 'NEU', 'score': 0.9132041931152344}
+
+@ColourpurpleGal Today I had a stand-up argument at work about exactly this. People are so thick sometimes.
+{'label': 'NEG', 'score': 0.9291079044342041}
+
+#Poll. Favourite this tweet if you think #ZacStacy's value goes down with #SamBradford injury. #nfl #fantasyfootball
+{'label': 'NEU', 'score': 0.9776903986930847}
+
+🎸🎶🎸🎶🎸
+
+It would mean the world to me 
+
+This is what they mean to me 
+
+https://t.co/qClUf8YcRR
+
+#BUMPSHOWSIGNED5SOSBIO @bumpshow
+
+🎸🎶🎸🎶🎸
+
+39
+{'label': 'POS', 'score': 0.9436467289924622}
+
+Stoned ☁️ | http://t.co/YknYwzlILP - #martan #menswear #mensstyle #mensfashion #ootd #topman… http://t.co/RqyL1os3jG
+{'label': 'NEU', 'score': 0.9515349268913269}
+
+スイカに塩もトマトに塩もキャラメルに塩も反対派
+{'label': 'NEU', 'score': 0.9467815160751343}
+
+Take covverrrrr http://t.co/2WzTCAcF1K
+{'label': 'NEU', 'score': 0.9044452905654907}
+
+At Toodouri Korean Barbeque — https://t.co/Ft5rAWpFF6
+{'label': 'NEU', 'score': 0.9595358967781067}
+
+@yurigomess EXATO!!!
+{'label': 'POS', 'score': 0.7605523467063904}
+
+الشي الوحيد اللي عجزت افهمه 
+
+وش دخل العصافير
+في البرامج الدينية  "̮~
+{'label': 'NEU', 'score': 0.9727416634559631}
+
+@marisabravi sexy look da ufficio 😍
+{'label': 'POS', 'score': 0.7332742214202881}
+
+Up and about on a Friday morning
+{'label': 'NEU', 'score': 0.9049351811408997}
+
+@sassyairlines okay new idea call the ambulance and tell them you are dieing of starvation
+{'label': 'NEG', 'score': 0.9776460528373718}
+
+พี่พั๊คโบกมือบ้ายๆ แอบเห็นจุนซูตามมาด้วย “@/monbrielle: they used the vip route http://t.co/bIlrKSEtg0”
+{'label': 'NEU', 'score': 0.9776048064231873}
+
+Not taking our @TheBachelorAU tweeting seriously at all. Just setting up some photos. #TheBachelorAU http://t.co/9pxE8VNAGM
+{'label': 'NEU', 'score': 0.8459994196891785}
+
+"@SBYudhoyono:TibadiLanudHalim Perdanakusuma drYogyakarta,Presiden SBY&amp;IbuAnidisambut upacara perpisahaygmengharukandrkeluarga besar TNI AU"
+{'label': 'NEU', 'score': 0.9704280495643616}
+
+I'm an uncle... Again. “@thomasrdotorg: Yeah baby 3.0! Say hello to Charlie. Big boy. Mother and son going great. http://t.co/lnSOZHnYdK”
+{'label': 'POS', 'score': 0.9735443592071533}
+
+Joel madden was my first ever crush teehee @JoelMadden
+{'label': 'POS', 'score': 0.913411557674408}
+
+Nice play Joe!
+{'label': 'POS', 'score': 0.9862326383590698}
+
+@drunkidhemmo wow
+{'label': 'NEU', 'score': 0.6881271004676819}
+
+@JackDail check the hashtag jackto300k and you'll see I spammed the shit out of it, you're welcome😘
+{'label': 'NEU', 'score': 0.7475246787071228}
+
+Father Bob, legend! http://t.co/yNBrpZbeCy
+{'label': 'POS', 'score': 0.9888112545013428}
+
+http://t.co/XJ2uhYlkWq
+{'label': 'NEU', 'score': 0.9076948165893555}
+
+Had such a lovely time co hosting the florsheimaus event at emporiummelbourne tonight with… http://t.co/BxWikZo7dh
+{'label': 'POS', 'score': 0.9901052117347717}
+
