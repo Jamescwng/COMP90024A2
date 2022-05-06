@@ -4,3 +4,4 @@ Flask==2.1.2
 torch==1.11.0
 transformers==3.0.2
 emoji==1.7.0
+waitress==2.1.1
