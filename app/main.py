@@ -4,6 +4,7 @@ from folium.plugins import HeatMap
 from folium.plugins import MarkerCluster
 import random
 from flask import Flask, render_template
+from waitress import serve
 
 user = "admin"
 password = "admin"
@@ -40,6 +41,7 @@ def index():
     return render_template("index.html", map = html_map)
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8080, debug=True)
+    serve(app, host="127.0.0.1", port=8080) # use serve for production development
+    #app.run(host="127.0.0.1", port=8080, debug=True)
 
 #https://stackoverflow.com/questions/51025893/flask-at-first-run-do-not-use-the-development-server-in-a-production-environmen
