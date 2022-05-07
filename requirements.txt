@@ -5,3 +5,6 @@ torch==1.11.0
 transformers==3.0.2
 emoji==1.7.0
 waitress==2.1.1
+geopandas==0.10.2
+nltk==3.7
+emot==3.1

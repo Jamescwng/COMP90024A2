@@ -1,0 +1,11 @@
+1. Undertake a variety of social media data analytics scenarios that explore the liveability of Melbourne 
+--> sentiment, time
+--> do the Positive and Negative tweets relate to some liveability keywords? E.g. housing, neighbourhood, transportation, environemnt, health, engagement, and opportunity
+--> The interface features interactive maps showing the city of Amsterdam and visualizing the sentiment scores of each neighbourhood
+
+
+2. How Twitter data can be used with AURIN data to improve our knowledge of liveability in Melbourne 
+--> are most negative tweets located where there is crime/suburbs are poor from AURIN data?
+--> what data should we get from AURIN openAPI?
+
+LIVEABILITY INDICATORS:
