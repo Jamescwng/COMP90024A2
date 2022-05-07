@@ -6,7 +6,7 @@ import couchdb
 # Simple multithreading https://stackoverflow.com/questions/2846653/how-can-i-use-threading-in-python
 from multiprocessing.pool import ThreadPool
 from geopy.geocoders import Nominatim
-
+import datetime as dt
 
 def surburbGetter(tweet: json) -> str:
     area = ""
@@ -23,12 +23,6 @@ def surburbGetter(tweet: json) -> str:
     return area
 
 
-def typeCrime(text: str):
-    if "crime" in text.lower():
-        return True
-    return False
-
-
 def tweetValidator(tweet: json) -> bool:
     text = tweet["text"]
     if text is None:
@@ -39,20 +33,27 @@ def tweetValidator(tweet: json) -> bool:
 
 
 def tweetFormatter(tweet: json) -> json:
+    # Location Data
     location = surburbGetter(tweet)
-    crime = typeCrime(tweet["text"])
     council = location["municipality"] if "municipality" in location else ""
     postcode = location["postcode"] if "postcode" in location else ""
     suburb = location["suburb"] if "suburb" in location else ""
     coordinates = tweet["geo"]["coordinates"]
     coordinates[0] = str(coordinates[0])
     coordinates[1] = str(coordinates[1])
+    # DateObj Data
+    dateObj = dt.datetime.strptime(tweet["created_at"], "%a %b %d %X +0000 %Y") if "created_at" in tweet else -1
+    hourOfDay = dateObj.hour if dateObj != -1 in tweet else -1
+    #  day-of-week as an integer from 0 to 6 representing Monday to Sunday
+    dayOfWeek = dateObj.weekday() if dateObj != -1 in tweet else -1
+
 
     sqlInsert = {
         "_id": tweet["_id"] or tweet["id"],
         "tweet": tweet["text"],
-        "created_at": tweet["created_at"],
-        "mentionCrime": crime,
+        "created_at": tweet["created_at"] if "created_at" in tweet else -1,
+        "hourOfDay" : hourOfDay,
+        "dayOfWeek": dayOfWeek,
         "council": council,
         "postcode": postcode,
         "suburb": suburb,
@@ -64,13 +65,20 @@ def tweetFormatter(tweet: json) -> json:
 def processTweet(listTweet, db):
     for row in listTweet:
         if row["geo"] and tweetValidator(row):  # Else ignore
-            dbInsert = tweetFormatter(row)
             try:
                 if row["_id"] in db:
                     doc = db.get(row["_id"])
-                    doc["geo"] = dbInsert["geo"]
+                    if not "geo" in doc:
+                        dbInsert = tweetFormatter(row)
+                        doc["geo"] = dbInsert["geo"]
+                    if not "dayOfWeek" in doc and "created_at" in doc:
+                        dateObj = dt.datetime.strptime(doc["created_at"], "%a %b %d %X +0000 %Y")
+                        doc["hourOfDay"] = dateObj.hour
+                        #  day-of-week as an integer from 0 to 6 representing Monday to Sunday
+                        doc["dayOfWeek"] = dateObj.weekday()
                     db.save(doc)
                 else:
+                    dbInsert = tweetFormatter(row)
                     db.save(dbInsert)
             except NameError:
                 print("Matching id found")
@@ -82,7 +90,7 @@ def main():
     tweet_json_file = open(sys.argv[1], 'r', encoding="utf8")
 
     couch = couchdb.Server('http://admin:admin@172.26.134.187:5984/')
-    db = couch['tweets']  # existing
+    db = couch['twitter']  # existing
 
     results = []
     # MultiProcessing (Load it up with a chunk because overhead is high)
