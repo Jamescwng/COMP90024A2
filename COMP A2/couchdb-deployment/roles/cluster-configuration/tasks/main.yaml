@@ -1,0 +1,120 @@
+---
+- name: Final setup
+  uri:
+    url: http://{{ masternode }}:5984/_cluster_setup
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: POST
+    body: "{\"action\": \"finish_cluster\"}"
+    body_format: json
+    status_code: 500
+    return_content: true
+    headers:
+      Content-Type: "application/json"
+    force_basic_auth: yes
+  when: ansible_ssh_host == masternode
+  register: setup
+
+- ansible.builtin.debug:
+    msg: '{{ setup }}'
+  when: setup is defined
+
+- name: Check configuration
+  uri:
+    url: http://{{ masternode }}:5984/_membership
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: GET
+    status_code: [200, 201]
+    return_content: true
+    force_basic_auth: yes
+  register: config
+
+- ansible.builtin.debug:
+    msg: '{{ config }}'
+  when: config is defined
+
+- name: Add twitter db
+  uri:
+    url: http://{{ masternode }}:5984/twitter
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: PUT
+    status_code: [200, 201]
+    return_content: true
+    force_basic_auth: yes
+  when: ansible_ssh_host == masternode
+
+- name: Verify db structure
+  uri:
+    url: http://{{ masternode }}:5984/_all_dbs
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: GET
+    status_code: [200, 201]
+    return_content: true
+    force_basic_auth: yes
+  register: struct
+
+- ansible.builtin.debug:
+    msg: '{{ struct }}'
+  when: struct is defined
+  
+# - name: Transfer final setup script
+#   ansible.builtin.template:
+#     src: final-setup.sh.j2
+#     dest: /home/ubuntu/final-setup.sh
+#     mode: o+rx
+#   when: ansible_ssh_host == masternode
+
+# - name: Final cluster setup
+#   become: yes
+#   command: /home/ubuntu/final-setup.sh
+#   when: ansible_ssh_host == masternode
+#   register: setup
+
+# - ansible.builtin.debug:
+#     msg: '{{ setup }}'
+#   when: setup is defined
+
+# - name: Transfer configuration check
+#   ansible.builtin.template:
+#     src: check-configuration.sh.j2
+#     dest: /home/ubuntu/check-configuration.sh
+#     mode: o+rx
+
+# - name: Configuration check
+#   become: yes
+#   command: /home/ubuntu/check-configuration.sh
+#   register: config
+
+# - ansible.builtin.debug:
+#     msg: '{{ config }}'
+#   when: config is defined
+
+# - name: Transfer twitter database
+#   ansible.builtin.template:
+#     src: add-database.sh.j2
+#     dest: /home/ubuntu/add-database.sh
+#     mode: o+rx
+#   when: ansible_ssh_host == masternode
+
+# - name: Add twitter database
+#   become: yes
+#   command: /home/ubuntu/add-database.sh
+#   when: ansible_ssh_host == masternode
+
+# - name: Transfer structure verification script
+#   ansible.builtin.template:
+#     src: verify-structure.sh.j2
+#     dest: /home/ubuntu/verify-structure.sh
+#     mode: o+rx
+
+# - name: Verify database structure
+#   become: yes
+#   command: /home/ubuntu/verify-structure.sh
+#   register: twitter
+
+# - ansible.builtin.debug:
+#     msg: '{{ twitter }}'
+#   when: twitter is defined
