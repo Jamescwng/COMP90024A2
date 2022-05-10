@@ -193,8 +193,6 @@ def generateSentiment(tweet):
         return ['Neutral', '0']
 
 
-# dfSentiment['sentiment'] = dfSentiment['new_tweet'].apply(lambda x: sentiment_score(x[:512]))
-
 
 def main():
     # Supply twitter json as arg 1
