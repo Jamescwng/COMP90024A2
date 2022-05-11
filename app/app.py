@@ -1,38 +1,55 @@
-import couchdb
 import folium
-from folium.plugins import HeatMap
-from folium.plugins import MarkerCluster
-import random
+from folium import Choropleth
 from flask import Flask, render_template
 from waitress import serve
+import pandas as pd
+import numpy as np
 
-user = "admin"
-password = "admin"
-couchserver = couchdb.Server("http://%s:%s@172.26.134.187:5984/" % (user, password))
+suburbs = pd.read_pickle("./suburbs.pkl")
+suburbData = pd.read_pickle("./suburbData.pkl")
+counts = pd.read_pickle("./counts.pkl")
 
-db = couchserver['twitter']
+bins = np.histogram(counts, bins=7)[1]
 
-rows = db.view('_design/CrimeInfo/_view/GeoData')
+# Create a base map
+m = folium.Map(location=[-37.810612, 144.963954], tiles='cartodbpositron', zoom_start=11)
 
-data = [row['value'] for row in rows]
-random.seed(0)
-random.shuffle(data)
+# Add a choropleth map to the base map
+Choropleth(geo_data=suburbs.__geo_interface__, 
+           data=counts, 
+           key_on="feature.id", 
+           fill_color='RdYlBu', line_opacity=0.9,
+           threshold_scale = bins,
+           legend_name='Percentage of Positive Tweets Per Suburb - Each Suburb Has 50+ Tweets'
+          ).add_to(m)
 
-MELB_COORDINATES = (-37.810612, 144.963954)
+mymap = m
 
-_map = folium.Map(location=MELB_COORDINATES, zoom_start=13)
+style_function = lambda x: {'fillColor': '#ffffff', 
+                            'color':'#000000', 
+                            'fillOpacity': 0.1, 
+                            'weight': 0.1}
+highlight_function = lambda x: {'fillColor': '#000000', 
+                                'color':'#000000', 
+                                'fillOpacity': 0.50, 
+                                'weight': 0.1}
 
-HeatMap(data[:1500]).add_to(_map)
+NIL = folium.features.GeoJson(
+    suburbData,
+    style_function=style_function, 
+    control=False,
+    highlight_function=highlight_function, 
+    tooltip=folium.features.GeoJsonTooltip(
+        fields=['suburb','counts','%'],
+        aliases=['Suburb: ','Number of Tweets: ', 'Tweets With Positive Sentiment (%): '],
+        style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
+    )
+)
+mymap.add_child(NIL)
+mymap.keep_in_front(NIL)
+folium.LayerControl().add_to(mymap)
 
-mCluster = MarkerCluster(name="Markers Demo").add_to(_map)
-
-for each in data[:1500]:
-    folium.Marker(location=[each[0], each[1]], 
-                 popup="Latitude: {0}, Longitude: {1}".format(each[0], each[1])).add_to(mCluster)
-
-folium.LayerControl().add_to(_map)
-
-html_map = _map._repr_html_()
+html_map = mymap._repr_html_()
 
 app = Flask(__name__)
 
