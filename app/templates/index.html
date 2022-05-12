@@ -11,7 +11,17 @@
   </header>
 
   <main>
-    <button onclick="myFunction()">Click me</button>
+    <!-- button onclick="myFunction()">Click me</button -->
+
+    <form action="" method='POST' name="form">
+      {{ form.csrt_token }}
+      {{ form.start.label }} {{ form.start(class='datepicker') }} {{ form.hidden_tag() }}
+      {{ form.end.label }} {{ form.end(class='datepicker') }} {{ form.hidden_tag() }}
+      <p>
+        {{ form.submit() }}
+      </p>
+    </form>
+
     <div style= "width:1260px;">
         {{map|safe}}
     </div>
