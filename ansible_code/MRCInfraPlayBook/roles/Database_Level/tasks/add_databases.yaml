@@ -1,0 +1,27 @@
+---
+# This script has the databases to be created
+- name: Add twitter db
+  uri:
+    url: http://{{ groups['DB_MASTER_NODE'][0] }}:5984/twitter
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: PUT
+    status_code: [200, 201]
+    return_content: true
+    force_basic_auth: yes
+  when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
+
+- name: Verify db structure
+  uri:
+    url: http://{{ groups['DB_MASTER_NODE'][0] }}:5984/_all_dbs
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: GET
+    status_code: [200, 201]
+    return_content: true
+    force_basic_auth: yes
+  register: struct
+
+- ansible.builtin.debug:
+    msg: '{{ struct }}'
+  when: struct is defined

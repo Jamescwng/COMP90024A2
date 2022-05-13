@@ -1,0 +1,44 @@
+# Execute the various tasks to create the required infrastructure
+# We use our local machine to interact with MRC to create the required resources
+# Since we need to check if the OS is Ubuntu, set gather_facts to true
+- 
+  name: Deploy Infrastructure Play
+  hosts: localhost
+  vars_files:
+    - host_vars/host_vars.yaml
+  gather_facts: true
+
+# Run the tasks at various levels ordered based on dependency
+  roles:
+    - role: Common_Level
+    - role: Volume_Level
+    - role: Security_Group_Level
+    - role: Instance_Level
+
+# Below plays use the in-memory inventory created as part of infrastructure deployment
+# and installs all the required software on the DB Server Nodes
+# This doesnt include the actual CouchDB Cluster
+- 
+  name: Install required Packages on DB Server Nodes
+  hosts: DB_SERVER_NODES
+  remote_user: ubuntu
+  vars_files:
+    - host_vars/host_vars.yaml
+  gather_facts: true
+
+  roles:
+    - role: Application_Level  
+
+
+# Below plays use the in-memory inventory created as part of infrastructure deployment
+# and installs and configures the actual CouchDB Cluster
+- 
+  name: Install required Packages on DB Server Nodes
+  hosts: DB_SERVER_NODES
+  remote_user: ubuntu
+  vars_files:
+    - host_vars/host_vars.yaml
+  gather_facts: true
+
+  roles:
+    - role: Database_Level 

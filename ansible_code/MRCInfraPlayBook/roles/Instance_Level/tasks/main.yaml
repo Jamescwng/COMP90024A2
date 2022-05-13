@@ -1,0 +1,76 @@
+# This file contains the YAML statements required to create the instances
+# This uses the server module
+
+- name: Create instances
+  openstack.cloud.server:
+    name: '{{ item.name }}'
+    image: '{{ instance_image }}'
+    key_name: '{{ instance_key_name }}'
+    flavor: '{{ instance_flavor }}'
+    availability_zone: '{{ availability_zone }}'
+    security_groups : '{{ sg_names }}'
+    volumes: '{{ item.volumes }}'
+    auto_floating_ip: yes
+    wait: yes
+    timeout: 600
+    state: present
+  loop: '{{ instances }}'
+  register: os_instance
+
+# Print a message including ip address which will be useful to debug any issues
+- ansible.builtin.debug:
+    msg: "Instance {{ item.openstack.name }} has been created. IP Address is {{ item.openstack.public_v4 }}"
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined
+
+# Wait for the hosts to be ready to accept connections
+- name: Wait for connection
+  ansible.builtin.wait_for:
+    host: "{{ item.openstack.public_v4 }}"
+    port: 22
+    timeout: 120
+    search_regex: OpenSSH
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined 
+
+# Add the ip address of the created hosts to in-memory inventory
+# this is useful in next steps. Available only until playbook exits.
+# If we need the details after the playbook exits, we need to 
+# write the inventory to ini file
+- name: Add DB SERVER host to in-memory inventory
+  ansible.builtin.add_host:
+    name: '{{ item.openstack.public_v4 }}'
+    instance_name: '{{ item.server.name }}'
+    groups: 
+       - DB_SERVER_NODES
+       - ALL_SERVER_NODES
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined and item.server.name != "AppServer"
+
+- name: Add App Server host to in-memory inventory
+  ansible.builtin.add_host:
+    name: '{{ item.openstack.public_v4 }}'
+    instance_name: '{{ item.openstack.name }}'
+    groups: 
+       - APP_SERVER_NODES
+       - ALL_SERVER_NODES
+    #instance_name: '{{ item.server.name }}'
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined and item.server.name == "AppServer"
+  #when: item.server is defined and item.server.name == "AppServer"
+
+- name: Add DB MASTER host to a separate group in in-memory inventory
+  ansible.builtin.add_host:
+    name: '{{ item.openstack.public_v4 }}'
+    instance_name: '{{ item.openstack.name }}'
+    groups: 
+       - DB_MASTER_NODE
+    #instance_name: '{{ item.server.name }}'
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined and item.server.name == "DBServerReplica1_Master"  
+
+#- ansible.builtin.debug:
+#       msg: ' Debugging the inmemory inventory, ITEMS:  {{ item }}'
+#  with_items: 
+#     - "{{ groups['DB_SERVER_NODES'] }}"
+#  when: item is defined

@@ -1,0 +1,9 @@
+# This script copies the files from local host to remote host
+#- name: copy the Application Code
+#  file:
+#      src: testfile.py
+#      dest: /etc/testfile.py
+
+- include: update_packages.yaml
+
+- include: docker_install.yaml

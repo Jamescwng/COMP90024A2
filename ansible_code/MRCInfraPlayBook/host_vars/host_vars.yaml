@@ -1,0 +1,91 @@
+# Common variables
+availability_zone: melbourne-qh2-uom
+instance_image: 356ff1ed-5960-4ac2-96a1-0c0198e6a999
+instance_key_name: team14a4kp
+instance_flavor: uom.mse.2c9g
+
+# Variables used on CouchDB deployment
+#ansible_connection: ssh
+#ansible_user: ubuntu
+ansible_ssh_private_key_file: ~/.ssh/team14a4kp.pem
+
+# variables for mounting volumes
+mountpoint: /data3 
+device: /dev/vdb
+
+# volumes
+# We have 500GB Allocated to the project
+# Assigning 100GB per volumes to be used on each node
+volumes:
+ - vol_name: DBReplica1_vol1
+   vol_size: 100
+ - vol_name: DBReplica2_vol1
+   vol_size: 100
+ - vol_name: DBReplica3_vol1
+   vol_size: 100
+ - vol_name: AppServer_vol1
+   vol_size: 100
+
+   
+# Security Groups
+# We need to be able to SSH and HTTP into the nodes
+# So we need to enable ports 22 and 80 on the servers
+security_groups:
+ - name: SSH_access
+   description: "Security group to allow SSH access"
+   protocol: tcp
+   port_range_min: 22
+   port_range_max: 22
+   remote_ip_prefix: 0.0.0.0/0
+ - name: HTTP_access
+   description: "Security group to allow HTTP access"
+   protocol: tcp
+   port_range_min: 80
+   port_range_max: 80
+   remote_ip_prefix: 0.0.0.0/0
+ - name: HTTPS_access
+   description: "Security group to allow HTTPS access"
+   protocol: tcp
+   port_range_min: 443
+   port_range_max: 443
+   remote_ip_prefix: 0.0.0.0/0
+ - name: Couchdb Port 5984
+   description: "Security group to allow 5984 port access"
+   protocol: tcp
+   port_range_min: 5984
+   port_range_max: 5984
+   remote_ip_prefix: 0.0.0.0/0
+ - name: Couchdb Port 9100-9200
+   description: "Security group to allow 9100-9200 port access"
+   protocol: tcp
+   port_range_min: 9100
+   port_range_max: 9200
+   remote_ip_prefix: 0.0.0.0/0
+ - name: Couchdb Port 4369
+   description: "Security group to allow 4369 port access"
+   protocol: tcp
+   port_range_min: 4369
+   port_range_max: 4369
+   remote_ip_prefix: 0.0.0.0/0
+
+# Instances
+# We can create a maximum of 4 nodes
+# Architecture: 3 node DB server with couchDB cluster installed
+#               1 node for application server to be used for everything else
+#                 including tweet harvesting, front end code etc.
+instances:
+ - name: DBServerReplica1_Master
+   volumes: ['DBReplica1_vol1']
+ - name: DBServerReplica2
+   volumes: ['DBReplica2_vol1']
+ - name: DBServerReplica3
+   volumes: ['DBReplica3_vol1']
+# - name: AppServer
+#   volumes: ['AppServer_vol1']
+
+# VARIABLES required for Couchdb
+user: admin
+pass: admin
+VERSION: 3.2.1
+cookie: a192aeb9904e6590849337933b000c99 
+nnodes: 3

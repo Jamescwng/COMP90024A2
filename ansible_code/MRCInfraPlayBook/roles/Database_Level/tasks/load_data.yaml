@@ -1,0 +1,16 @@
+---
+- name: Copy the data files from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3
+     src: ../files/testfile.txt
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the data files from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3
+     src: ../files/codefile.txt
+     backup: no
+     owner: ubuntu
+     mode: '0644'
