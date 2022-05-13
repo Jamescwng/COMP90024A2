@@ -1,0 +1,37 @@
+---
+- name: Install dependencies for mounting
+  become: yes
+  ansible.builtin.apt:
+    name: ['xfsprogs']
+    state: latest
+    install_recommends: no
+    update_cache: yes
+
+- name: Make file system
+  become: yes
+  community.general.filesystem:
+    fstype: xfs
+    dev: "{{ device }}"
+
+- name: Checking folders
+  become: yes
+  ansible.builtin.stat:
+    path: "{{ mountpoint }}"
+  register: directory_stats
+
+- name: Create directory
+  become: yes
+  ansible.builtin.file:
+    path: "{{ mountpoint }}"
+    recurse: yes
+    state: directory
+    owner: ubuntu
+    mode: '1777'
+
+- name: Mount device
+  become: yes
+  ansible.posix.mount:
+    path: "{{ mountpoint }}"
+    src: "{{ device }}"
+    fstype: xfs
+    state: mounted

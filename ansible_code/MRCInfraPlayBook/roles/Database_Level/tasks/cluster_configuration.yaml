@@ -1,0 +1,35 @@
+---
+- name: Final setup
+  uri:
+    url: http://{{ groups['DB_MASTER_NODE'][0] }}:5984/_cluster_setup
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: POST
+    body: "{\"action\": \"finish_cluster\"}"
+    body_format: json
+    status_code: 500
+    return_content: true
+    headers:
+      Content-Type: "application/json"
+    force_basic_auth: yes
+  when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
+  register: setup
+
+- ansible.builtin.debug:
+    msg: '{{ setup }}'
+  when: setup is defined
+
+- name: Check configuration
+  uri:
+    url: http://{{ groups['DB_MASTER_NODE'][0] }}:5984/_membership
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: GET
+    status_code: [200, 201]
+    return_content: true
+    force_basic_auth: yes
+  register: config
+
+- ansible.builtin.debug:
+    msg: '{{ config }}'
+  when: config is defined

@@ -1,0 +1,22 @@
+- name: Create couchdb container
+  become: yes
+  docker_container:
+    name: 'couchdb{{ ansible_ssh_host }}'
+    image: 'ibmcom/couchdb3:{{ VERSION }}'
+    state: started
+    ports:
+      - "4369:4369"
+      - "5984:5984"
+      - "9100-9200:9100-9200"
+    env:
+      COUCHDB_USER: '{{ user }}'
+      COUCHDB_PASSWORD: '{{ pass }}'
+      COUCHDB_SECRET: '{{ cookie }}'
+      NODENAME: '{{ ansible_ssh_host }}'
+      ERL_FLAGS: "-setcookie {{ cookie }}"
+  register: docker_db_status
+
+- name: Check container port 5984 is ready to use
+  wait_for:
+    host: "{{ ansible_ssh_host }}"
+    port: 5984
