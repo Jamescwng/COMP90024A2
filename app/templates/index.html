@@ -14,16 +14,21 @@
     <!-- button onclick="myFunction()">Click me</button -->
 
     <form action="" method='POST' name="form">
-      {{ form.csrt_token }}
-      {{ form.start.label }} {{ form.start(class='datepicker') }} {{ form.hidden_tag() }}
-      {{ form.end.label }} {{ form.end(class='datepicker') }} {{ form.hidden_tag() }}
       <p>
+        {{ form.csrt_token }}
+        {{ form.start.label }} {{ form.start(class='datepicker') }} {{ form.hidden_tag() }}
+        {{ form.end.label }} {{ form.end(class='datepicker') }} {{ form.hidden_tag() }}
         {{ form.submit() }}
       </p>
     </form>
 
     <div style= "width:1260px;">
-        {{map|safe}}
+      <p>{{ map|safe }}</p>
+    </div>
+
+    <div style= "width:1260px;">
+      <h2>Pollution Map</h2>
+      <p>{{ pollution_map|safe }}</p>
     </div>
   </main>
 
