@@ -7,5 +7,3 @@
 2. How Twitter data can be used with AURIN data to improve our knowledge of liveability in Melbourne 
 --> are most negative tweets located where there is crime/suburbs are poor from AURIN data?
 --> what data should we get from AURIN openAPI?
-
-LIVEABILITY INDICATORS:
