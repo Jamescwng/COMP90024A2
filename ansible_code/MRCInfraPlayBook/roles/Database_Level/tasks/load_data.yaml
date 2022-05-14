@@ -1,4 +1,5 @@
 ---
+# Copy files from localhost to the remote servers
 - name: Copy the data files from localhost to remote server
   ansible.builtin.copy:
      dest: /data3
@@ -7,10 +8,12 @@
      owner: ubuntu
      mode: '0644'
 
-- name: Copy the data files from localhost to remote server
-  ansible.builtin.copy:
-     dest: /data3
-     src: ../files/codefile.txt
-     backup: no
-     owner: ubuntu
-     mode: '0644'
+#- name: Copy the data files from localhost to remote server
+#  ansible.builtin.copy:
+#     dest: /data3
+#     src: ../files/twitter-melb.json.tar.gz
+#     backup: no
+#     owner: ubuntu
+#     mode: '0644'
+
+# Run commands to 
