@@ -11,6 +11,17 @@
     force_basic_auth: yes
   when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
 
+- name: Add pollutant db
+  uri:
+    url: http://{{ groups['DB_MASTER_NODE'][0] }}:5984/pollutant
+    user: '{{ user }}'
+    password: '{{ pass }}'
+    method: PUT
+    status_code: [200, 201]
+    return_content: true
+    force_basic_auth: yes
+  when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
+
 - name: Verify db structure
   uri:
     url: http://{{ groups['DB_MASTER_NODE'][0] }}:5984/_all_dbs

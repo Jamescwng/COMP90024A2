@@ -6,18 +6,18 @@ from datetime import datetime
 import couchdb
 import folium
 import geopandas as gpd
+import matplotlib
+matplotlib.use('Agg')
 import numpy as np
 import pandas as pd
 from flask import Flask, render_template
 from flask_wtf import FlaskForm
 from folium import Choropleth
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Point
 from waitress import serve
 from wtforms import SubmitField, validators
 from wtforms.fields import DateField
-from wtforms.validators import DataRequired
+
 
 # Form to update twitter data timeframe
 class DateForm(FlaskForm):
