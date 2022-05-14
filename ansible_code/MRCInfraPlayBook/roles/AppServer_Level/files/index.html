@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <title>Melbourne Sentiment</title>
+  </head>
+
+  <header>
+      <h1>Melbourne Sentiment Map</h1>
+  </header>
+
+  <main>
+    <!-- button onclick="myFunction()">Click me</button -->
+
+    <form action="" method='POST' name="form">
+      <p>
+        {{ form.csrt_token }}
+        {{ form.start.label }} {{ form.start(class='datepicker') }} {{ form.hidden_tag() }}
+        {{ form.end.label }} {{ form.end(class='datepicker') }} {{ form.hidden_tag() }}
+        {{ form.submit() }}
+      </p>
+    </form>
+
+    <div style= "width:1260px;">
+      <p>{{ map|safe }}</p>
+    </div>
+
+    <div style= "width:1260px;">
+      <h2>Pollution Map</h2>
+      <p>{{ pollution_map|safe }}</p>
+    </div>
+
+    <div style= "width:1260px;">
+      <p>
+        <img src="{{ scatter }}"/>
+      </p>
+      <p>
+        <img src="{{ freq }}"/>
+      </p>
+      <p>
+        Correlation: {{ corr }}
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>Copyright ©2022 - Created by Matteo, Emmanuel, James, Kranthi, Thanadol</p>
+  </footer>
+  
+</html>

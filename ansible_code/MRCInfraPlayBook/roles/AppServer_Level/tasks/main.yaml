@@ -16,10 +16,31 @@
     state: latest
 
 # Copy files from localhost to the remote Application Server
-- name: Copy the data files from localhost to remote server
+### Not sure if needed
+- name: Copy the python script from localhost to remote server
   ansible.builtin.copy:
-     dest: /data3
-     src: ../files/testfile.txt
+     dest: /frontend
+     src: ../files/app.py
      backup: no
      owner: ubuntu
      mode: '0644'
+
+- name: Copy the html from localhost to remote server
+  ansible.builtin.copy:
+     dest: /frontend/templates
+     src: ../files/index.html
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the vic suburb data from localhost to remote server
+  ansible.builtin.copy:
+     dest: /frontend/localities
+     src: ../files/vic.shp
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Run frontend python script
+  shell: |
+    python3 /frontend/app.py 172.26.134.187
