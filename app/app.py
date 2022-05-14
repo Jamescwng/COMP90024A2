@@ -1,3 +1,5 @@
+import base64
+import io
 from copy import deepcopy
 from datetime import datetime
 
@@ -9,11 +11,13 @@ import pandas as pd
 from flask import Flask, render_template
 from flask_wtf import FlaskForm
 from folium import Choropleth
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+from shapely.geometry import Point, Polygon
 from waitress import serve
 from wtforms import SubmitField, validators
 from wtforms.fields import DateField
 from wtforms.validators import DataRequired
-from shapely.geometry import Polygon, Point
 
 # Form to update twitter data timeframe
 class DateForm(FlaskForm):
@@ -137,7 +141,7 @@ def get_map(start=datetime.min.date(), end=datetime.max.date()):
     mymap.keep_in_front(NIL)
     folium.LayerControl().add_to(mymap)
 
-    return mymap._repr_html_()
+    return data.join(suburbs), mymap._repr_html_()
 
 def get_pollution_map(data):
     counts = data.loc[:,'counts']
@@ -184,9 +188,30 @@ def get_pollution_map(data):
 
     return mymap._repr_html_()
 
+def get_correlation(twitter_data, pollution_data):
+    correlationData = pd.merge(twitter_data, pollution_data, left_index=True, right_index=True)
+    correlationData = correlationData[['%','counts_y']]
+    correlationData = correlationData[correlationData['counts_y'] != 0]
+
+    scatter = correlationData.plot(kind='scatter',x='%',y='counts_y',color='red')
+    scatter.set_xlabel('% of Positive Tweets Per Suburb')
+    scatter.set_ylabel('No. of Pollutant Reports per Suburb')
+    scatter.set_title('Correlation Between Positive Sentiment and Pollutant Reports Per Suburb')
+
+    freq = correlationData.plot(kind='bar',x='%',y='counts_y',color='red')
+    freq.xaxis.set_ticklabels([])
+    freq.set_xlabel('% of Positive Tweets Per Suburb')
+    freq.set_ylabel('No. of Pollutant Reports per Suburb')
+    freq.set_title('Correlation Between Positive Sentiment and Pollutant Reports Per Suburb')
+    freq.get_legend().remove()
+
+    return scatter, freq, correlationData['counts_y'].corr(correlationData['%'])
+    
+
 ###########################################################################################################################################
 
-pollution_map = get_pollution_map(get_pollution_data())
+pollution_data = get_pollution_data()
+pollution_map = get_pollution_map(pollution_data)
 
 # Run frontend
 app = Flask(__name__)
@@ -198,17 +223,50 @@ def index():
     form = DateForm()
     # Update map on submit
     if form.validate_on_submit():
+        twitter_data, twitter_map = get_map(form.start.data, form.end.data)
+        scatter, freq, corr, = get_correlation(twitter_data, pollution_data)
+
+        scatterImage = io.BytesIO()
+        scatter.get_figure().savefig(scatterImage)
+        scatterString = "data:image/png;base64,"
+        scatterString += base64.b64encode(scatterImage.getvalue()).decode('utf8')
+
+        freqImage = io.BytesIO()
+        freq.get_figure().savefig(freqImage)
+        freqString = "data:image/png;base64,"
+        freqString += base64.b64encode(freqImage.getvalue()).decode('utf8')
+
         return render_template(
             "index.html", 
             form=form, 
-            map=get_map(form.start.data, form.end.data),
-            pollution_map=pollution_map
+            map=twitter_map,
+            pollution_map=pollution_map,
+            scatter=scatterString,
+            freq=freqString,
+            corr=corr
         )
+
+    twitter_data, twitter_map = get_map()
+    scatter, freq, corr, = get_correlation(twitter_data, pollution_data)
+
+    scatterImage = io.BytesIO()
+    scatter.get_figure().savefig(scatterImage)
+    scatterString = "data:image/png;base64,"
+    scatterString += base64.b64encode(scatterImage.getvalue()).decode('utf8')
+
+    freqImage = io.BytesIO()
+    freq.get_figure().savefig(freqImage)
+    freqString = "data:image/png;base64,"
+    freqString += base64.b64encode(freqImage.getvalue()).decode('utf8')
+    
     return render_template(
         "index.html", 
         form=form, 
-        map=get_map(), 
-        pollution_map=pollution_map
+        map=twitter_map, 
+        pollution_map=pollution_map,
+        scatter=scatterString,
+        freq=freqString,
+        corr=corr
     )
 
 if __name__ == "__main__":

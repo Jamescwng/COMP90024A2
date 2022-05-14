@@ -30,6 +30,22 @@
       <h2>Pollution Map</h2>
       <p>{{ pollution_map|safe }}</p>
     </div>
+
+    <div style= "width:1260px;">
+      <p>{{ pollution_map|safe }}</p>
+    </div>
+
+    <div style= "width:1260px;">
+      <p>
+        <img src="{{ scatter }}"/>
+      </p>
+      <p>
+        <img src="{{ freq }}"/>
+      </p>
+      <p>
+        Correlation: {{ corr }}
+      </p>
+    </div>
   </main>
 
   <footer>
