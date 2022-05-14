@@ -1,0 +1,12 @@
+---
+# Mount the volumes before copying files
+- include: mount_volumes.yaml 
+
+# Copy files from localhost to the remote Application Server
+- name: Copy the data files from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3
+     src: ../files/testfile.txt
+     backup: no
+     owner: ubuntu
+     mode: '0644'
