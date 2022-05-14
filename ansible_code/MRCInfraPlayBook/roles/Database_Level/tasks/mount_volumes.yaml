@@ -35,3 +35,15 @@
     src: "{{ device }}"
     fstype: xfs
     state: mounted
+
+- name: Wait for the mounted volume to be available
+  become: yes
+  ansible.builtin.wait_for:
+    path: "{{ mountpoint }}"
+    state: present
+    msg: Timedout Waiting for mountpoint to be available
+
+- name: Change the permissions on the directory
+  become: yes
+  shell: |
+    chmod 777 "{{ mountpoint }}" 

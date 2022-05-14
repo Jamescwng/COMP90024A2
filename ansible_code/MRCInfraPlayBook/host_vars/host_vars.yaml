@@ -5,8 +5,6 @@ instance_key_name: team14a4kp
 instance_flavor: uom.mse.2c9g
 
 # Variables used on CouchDB deployment
-#ansible_connection: ssh
-#ansible_user: ubuntu
 ansible_ssh_private_key_file: ~/.ssh/team14a4kp.pem
 
 # variables for mounting volumes
@@ -78,14 +76,14 @@ instances:
    volumes: ['DBReplica1_vol1']
  - name: DBServerReplica2
    volumes: ['DBReplica2_vol1']
- - name: DBServerReplica3
-   volumes: ['DBReplica3_vol1']
-# - name: AppServer
-#   volumes: ['AppServer_vol1']
+# - name: DBServerReplica3
+#   volumes: ['DBReplica3_vol1']
+ - name: AppServer
+   volumes: ['AppServer_vol1']
 
 # VARIABLES required for Couchdb
 user: admin
 pass: admin
 VERSION: 3.2.1
 cookie: a192aeb9904e6590849337933b000c99 
-nnodes: 3
+nnodes: 2
