@@ -65,6 +65,12 @@ security_groups:
    port_range_min: 4369
    port_range_max: 4369
    remote_ip_prefix: 0.0.0.0/0
+ - name: Frontend Port 8080
+   description: "Security group to allow 8080 port access"
+   protocol: tcp
+   port_range_min: 8080
+   port_range_max: 8080
+   remote_ip_prefix: 0.0.0.0/0
 
 # Instances
 # We can create a maximum of 4 nodes

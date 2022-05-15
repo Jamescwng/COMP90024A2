@@ -15,32 +15,87 @@
     name: ['pip','folium','flask','waitress','pandas','numpy','shapely','geopandas','couchdb','flask_wtf','wtforms','matplotlib']
     state: latest
 
+- name: Creating required frontend directories
+  shell: |
+    cd /data3
+    rm -rf templates
+    rm -rf localities
+    mkdir templates
+    mkdir localities
+
 # Copy files from localhost to the remote Application Server
-### Not sure if needed
 - name: Copy the python script from localhost to remote server
   ansible.builtin.copy:
-     dest: /frontend
+     dest: /data3
      src: ../files/app.py
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the suburbs.txt from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/suburbs.txt
+     src: ../files/suburbs.txt
      backup: no
      owner: ubuntu
      mode: '0644'
 
 - name: Copy the html from localhost to remote server
   ansible.builtin.copy:
-     dest: /frontend/templates
+     dest: /data3/templates/index.html
      src: ../files/index.html
      backup: no
      owner: ubuntu
      mode: '0644'
 
-- name: Copy the vic suburb data from localhost to remote server
+- name: Copy the vic.dbf from localhost to remote server
   ansible.builtin.copy:
-     dest: /frontend/localities
+     dest: /data3/localities/vic.dbf
+     src: ../files/vic.dbf
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the vic.prj from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/localities/vic.prj
+     src: ../files/vic.prj
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the vic.shp from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/localities/vic.shp
      src: ../files/vic.shp
      backup: no
      owner: ubuntu
      mode: '0644'
 
+- name: Copy the vic.shx from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/localities/vic.shx
+     src: ../files/vic.shx
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Change file permissions
+  shell: |
+    cd /data3
+    chmod 777 ./localities/vic.shp
+    chmod 777 ./templates/index.html
+
+# # Download the twitter historic data file from dropbox
+# - name: Downloading Twitter historic data file on to App Server
+#   become: yes
+#   shell: |
+#     cd ~/
+#     wget --no-check-cert https://www.dropbox.com/s/y4ss9gmw6ykde51/twitter-melb.json.tar.gz?dl=0
+#     chmod 777 ~/twitter-melb.json.tar.gz*
+#     gunzip ~/twitter-melb.json.tar.gz*
+
 - name: Run frontend python script
   shell: |
-    python3 /frontend/app.py 172.26.134.187
+    cd /data3
+    python3 app.py {{ groups['DB_MASTER_NODE'][0] }}

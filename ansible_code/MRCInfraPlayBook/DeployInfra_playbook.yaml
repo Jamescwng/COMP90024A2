@@ -41,4 +41,17 @@
   gather_facts: true
 
   roles:
-    - role: Database_Level 
+    - role: Database_Level
+
+# Below plays use the in-memory inventory created as part of infrastructure deployment
+# copies files to Application Server
+- 
+  name: Install required Packages on DB Server Nodes
+  hosts: APP_SERVER_NODES
+  remote_user: ubuntu
+  vars_files:
+    - host_vars/host_vars.yaml
+  gather_facts: true
+
+  roles:
+    - role: AppServer_Level
