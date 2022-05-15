@@ -1,0 +1,1 @@
+{"_id":"_design/Pollution","views":{"Data":{"map":"function (doc) {\n  emit(doc._id, {geo: doc.geometry.coordinates, reports: doc.properties.reports});\n}"}},"language":"javascript"}
