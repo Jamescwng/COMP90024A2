@@ -1,6 +1,4 @@
-import datetime as dt
 import json
-import os
 import re
 import sys
 import time
@@ -18,11 +16,15 @@ from scipy.special import softmax
 import numpy as np
 
 nltk.download('stopwords')
+from nltk.corpus import stopwords
+from nltk.tokenize import RegexpTokenizer
 from transformers import AutoModelForSequenceClassification
 from transformers import AutoTokenizer, AutoConfig
 
 
-twitter_bearer_token = os.getenv("TWITTER_BEARER_TOKEN")
+
+with open(sys.argv[2], 'r', encoding="utf8") as f:
+    twitter_bearer_token = f.read().rstrip()
 
 if not twitter_bearer_token:
     raise RuntimeError("Not found bearer token")
@@ -173,12 +175,14 @@ if __name__ == "__main__":
      - If security has been compromised, regenerate it
      - DO NOT store it in public places or shared docs
     """
-
+    with open(sys.argv[3], 'r', encoding="utf8") as ipfile:
+        hostip = ipfile.read()
     # Database
-    couch = couchdb.Server('http://admin:admin@172.26.134.187:5984/')
+    ip = 'http://admin:admin@' + hostip
+    couch = couchdb.Server(ip)
     db = couch['twitter']
 
-    # # Model
+    # Model
     MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
     tokenizer = AutoTokenizer.from_pretrained(MODEL)
     config = AutoConfig.from_pretrained(MODEL)
@@ -234,5 +238,3 @@ if __name__ == "__main__":
                 if tweetValidator(tweet):  # Else ignore
                     processTweet(tweet, db)
 
-# BEARER TOKEN
-# AAAAAAAAAAAAAAAAAAAAAFIObwEAAAAAm%2BkVcGvN3leXCC1B85puJEY6Yhc%3D0s9PQRynu9vaMVsUKpGtaQTpiN0TloMti6e7UhQTBkp2tttrsc
