@@ -2,11 +2,128 @@
 # Mount the volumes before copying files
 - include: mount_volumes.yaml 
 
+- name: Install pip
+  become: yes
+  ansible.builtin.apt:
+    name: ['python3-dev','python3-setuptools','python3-pip']
+    state: latest
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Update pip and install frontend dependencies
+  ansible.builtin.pip:
+    name: ['pip','folium','flask','waitress','pandas','numpy','shapely','geopandas','couchdb','flask_wtf','wtforms','matplotlib','Rtree']
+    state: latest
+
+- name: Install scraper dependencies
+  ansible.builtin.pip:
+    name: ['nltk','emot','geopy','tweepy','scipy','transformers','torch']
+    state: latest
+
+- name: Creating required frontend directories
+  shell: |
+    cd /data3
+    rm -rf templates
+    rm -rf localities
+    mkdir templates
+    mkdir localities
+
 # Copy files from localhost to the remote Application Server
-- name: Copy the data files from localhost to remote server
+- name: Copy the python script from localhost to remote server
   ansible.builtin.copy:
      dest: /data3
-     src: ../files/testfile.txt
+     src: ../files/app.py
      backup: no
      owner: ubuntu
      mode: '0644'
+
+- name: Copy the suburbs.txt from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/suburbs.txt
+     src: ../files/suburbs.txt
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the html from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/templates/index.html
+     src: ../files/index.html
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the vic.dbf from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/localities/vic.dbf
+     src: ../files/vic.dbf
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the vic.prj from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/localities/vic.prj
+     src: ../files/vic.prj
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the vic.shp from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/localities/vic.shp
+     src: ../files/vic.shp
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the vic.shx from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/localities/vic.shx
+     src: ../files/vic.shx
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the twitter scraper python script from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3
+     src: ../files/twitterApiV1.py
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the bearertoken.txt from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/bearertoken.txt
+     src: ../files/bearertoken.txt
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the query.txt from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/query.txt
+     src: ../files/query.txt
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Change file permissions
+  shell: |
+    cd /data3
+    chmod 777 ./localities/vic.shp
+    chmod 777 ./templates/index.html
+    chmod 777 ./twitterApiV1.py
+    chmod 777 ./bearertoken.txt
+    chmod 777 ./query.txt
+
+- name: Run frontend python script
+  shell: |
+    cd /data3
+    nohup python3 app.py {{ groups['DB_MASTER_NODE'][0] }} &
+
+- name: Run twitter scraper python script
+  shell: |
+    cd /data3
+    nohup python3 twitterApiV1.py query.txt bearertoken.txt {{ groups['DB_MASTER_NODE'][0] }}:5984 &

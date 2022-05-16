@@ -1,5 +1,6 @@
 import base64
 import io
+import sys
 from copy import deepcopy
 from datetime import datetime
 
@@ -7,6 +8,7 @@ import couchdb
 import folium
 import geopandas as gpd
 import matplotlib
+
 matplotlib.use('Agg')
 import numpy as np
 import pandas as pd
@@ -18,6 +20,7 @@ from waitress import serve
 from wtforms import SubmitField, validators
 from wtforms.fields import DateField
 
+ip = sys.argv[1]
 
 # Form to update twitter data timeframe
 class DateForm(FlaskForm):
@@ -36,7 +39,8 @@ suburbs = suburbs.loc[suburbsToKeep[0]]
 # Couchdb access
 user = "admin"
 password = "admin"
-couchserver = couchdb.Server("http://%s:%s@172.26.134.187:5984/" % (user, password))
+# couchserver = couchdb.Server("http://%s:%s@172.26.134.187:5984/" % (user, password))
+couchserver = couchdb.Server("http://%s:%s@%s:5984/" % (user, password, ip))
 
 ###########################################################################################################################################
 
@@ -270,7 +274,7 @@ def index():
     )
 
 if __name__ == "__main__":
-    serve(app, host="127.0.0.1", port=8080) # use serve for production development
+    serve(app, host="*", port=8080) # use serve for production development
     #app.run(host="127.0.0.1", port=8080, debug=True)
 
 #https://stackoverflow.com/questions/51025893/flask-at-first-run-do-not-use-the-development-server-in-a-production-environmen

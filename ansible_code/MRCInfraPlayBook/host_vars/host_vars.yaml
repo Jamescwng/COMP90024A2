@@ -65,6 +65,12 @@ security_groups:
    port_range_min: 4369
    port_range_max: 4369
    remote_ip_prefix: 0.0.0.0/0
+ - name: Frontend Port 8080
+   description: "Security group to allow 8080 port access"
+   protocol: tcp
+   port_range_min: 8080
+   port_range_max: 8080
+   remote_ip_prefix: 0.0.0.0/0
 
 # Instances
 # We can create a maximum of 4 nodes
@@ -76,8 +82,8 @@ instances:
    volumes: ['DBReplica1_vol1']
  - name: DBServerReplica2
    volumes: ['DBReplica2_vol1']
-# - name: DBServerReplica3
-#   volumes: ['DBReplica3_vol1']
+ - name: DBServerReplica3
+   volumes: ['DBReplica3_vol1']
  - name: AppServer
    volumes: ['AppServer_vol1']
 
@@ -86,4 +92,4 @@ user: admin
 pass: admin
 VERSION: 3.2.1
 cookie: a192aeb9904e6590849337933b000c99 
-nnodes: 2
+nnodes: 3

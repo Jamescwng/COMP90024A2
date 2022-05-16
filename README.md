@@ -41,3 +41,5 @@ geopandas
 couchdb
 flask_wtf
 wtforms
+
+curl -X GET 'http://admin:admin@172.26.134.187:5984/twitter/_all_docs?include_docs=true' | jq '{"docs": [.rows[].doc]}' | jq 'del(.docs[]._rev)' > twitter.json

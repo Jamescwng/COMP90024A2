@@ -1,0 +1,10 @@
+{
+    "_id": "_design/Data",
+    "views": {
+        "Data": {
+            "reduce": "_count",
+            "map": "function (doc) {\n  var sentiment = doc.sentiment[0];\n  var confidence = doc.sentiment[1];\n  var suburb = doc.suburb;\n  if (sentiment === \"Positive\" && confidence > 0.8 && suburb !== \"\") {\n    emit([suburb, new Date(doc.created_at).getTime()], 1);\n  } else if (sentiment === \"Negative\" && confidence > 0.8 && suburb !== \"\") {\n    emit([suburb, new Date(doc.created_at).getTime()], 0);\n  }\n}"
+        }
+    },
+    "language": "javascript"
+}
