@@ -1,2 +1,3 @@
 **/openrc.sh
 **/.DS_Store
+ansible_code/_dbs.couch

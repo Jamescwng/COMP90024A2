@@ -274,7 +274,7 @@ def index():
     )
 
 if __name__ == "__main__":
-    serve(app, host="127.0.0.1", port=8080) # use serve for production development
+    serve(app, host="*", port=8080) # use serve for production development
     #app.run(host="127.0.0.1", port=8080, debug=True)
 
 #https://stackoverflow.com/questions/51025893/flask-at-first-run-do-not-use-the-development-server-in-a-production-environmen

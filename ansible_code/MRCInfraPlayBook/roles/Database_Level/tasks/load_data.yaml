@@ -1,12 +1,22 @@
 ---
-# Copy files from localhost to the remote servers
-- name: Copy the data files from localhost to remote server
-  ansible.builtin.copy:
-     dest: /data3
-     src: ../files/testfile.txt
-     backup: no
-     owner: ubuntu
-     mode: '0644'
+# Download the twitter historic data file from dropbox
+- name: Downloading Twitter historic data file on to App Server
+  become: yes
+  shell: |
+    cd /data3/
+    wget --no-check-cert https://www.dropbox.com/s/kf01pr7pnnzy97t/twitter.json
+    chmod 777 twitter.json
+    curl -X POST "http://{{ user }}:{{ pass }}@{{ groups['DB_MASTER_NODE'][0] }}:5984/twitter/_bulk_docs " -H "Content-Type: application/json" -d @./twitter.json
+  when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
+
+- name: Downloading Pollutant data file on to App Server
+  become: yes
+  shell: |
+    cd /data3/
+    wget --no-check-cert https://www.dropbox.com/s/9plt3tujwc1mjeb/pollutant.json
+    chmod 777 pollutant.json
+    curl -X POST "http://{{ user }}:{{ pass }}@{{ groups['DB_MASTER_NODE'][0] }}:5984/pollutant/_bulk_docs " -H "Content-Type: application/json" -d @./pollutant.json
+  when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
 
 - name: Copy the twitter MapReduce views from localhost to remote server
   ansible.builtin.copy:
@@ -26,7 +36,7 @@
      mode: '0644'
   when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
 
-- name: Add twitter MapReduce views to database
+- name: Add MapReduce views to database
   shell: |
     cd /data3
     chmod 777 ./db-views.json
@@ -34,6 +44,20 @@
     curl -X PUT http://admin:admin@{{ groups['DB_MASTER_NODE'][0] }}:5984/twitter/_design/Data -d @db-views.json
     curl -X PUT http://admin:admin@{{ groups['DB_MASTER_NODE'][0] }}:5984/pollutant/_design/Pollution -d @pollutant-views.json
   when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
+
+# - name: Install dependencies
+#   ansible.builtin.pip:
+#     name: ['pip','ijson','couchdb','geopy','numpy','scipy','emot','regex','nltk','transformers','torch']
+#     state: latest
+
+# - name: Add twitter data to database
+#   shell: |
+#     cd /data3
+#     chmod 777 ./db.json
+#     chmod 777 ./query.txt
+#     chmod 777 ./jsonTwitter.py
+#     python3 jsonTwitter.py query.txt {{ groups['DB_MASTER_NODE'][0] }}
+#   when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
 
 #- name: Copy the data files from localhost to remote server
 #  ansible.builtin.copy:
