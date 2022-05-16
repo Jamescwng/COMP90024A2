@@ -82,8 +82,8 @@ instances:
    volumes: ['DBReplica1_vol1']
  - name: DBServerReplica2
    volumes: ['DBReplica2_vol1']
-# - name: DBServerReplica3
-#   volumes: ['DBReplica3_vol1']
+ - name: DBServerReplica3
+   volumes: ['DBReplica3_vol1']
  - name: AppServer
    volumes: ['AppServer_vol1']
 
@@ -92,4 +92,4 @@ user: admin
 pass: admin
 VERSION: 3.2.1
 cookie: a192aeb9904e6590849337933b000c99 
-nnodes: 2
+nnodes: 3

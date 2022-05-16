@@ -10,9 +10,14 @@
     update_cache: yes
   when: ansible_distribution == "Ubuntu"
 
-- name: Update pip and install dependencies
+- name: Update pip and install frontend dependencies
   ansible.builtin.pip:
     name: ['pip','folium','flask','waitress','pandas','numpy','shapely','geopandas','couchdb','flask_wtf','wtforms','matplotlib','Rtree']
+    state: latest
+
+- name: Install scraper dependencies
+  ansible.builtin.pip:
+    name: ['nltk','emot','geopy','tweepy','scipy','transformers','torch']
     state: latest
 
 - name: Creating required frontend directories
@@ -80,13 +85,45 @@
      owner: ubuntu
      mode: '0644'
 
+- name: Copy the twitter scraper python script from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3
+     src: ../files/twitterApiV1.py
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the bearertoken.txt from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/bearertoken.txt
+     src: ../files/bearertoken.txt
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
+- name: Copy the query.txt from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/query.txt
+     src: ../files/query.txt
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+
 - name: Change file permissions
   shell: |
     cd /data3
     chmod 777 ./localities/vic.shp
     chmod 777 ./templates/index.html
+    chmod 777 ./twitterApiV1.py
+    chmod 777 ./bearertoken.txt
+    chmod 777 ./query.txt
 
 - name: Run frontend python script
   shell: |
     cd /data3
     nohup python3 app.py {{ groups['DB_MASTER_NODE'][0] }} &
+
+- name: Run twitter scraper python script
+  shell: |
+    cd /data3
+    nohup python3 twitterApiV1.py query.txt bearertoken.txt {{ groups['DB_MASTER_NODE'][0] }}:5984 &

@@ -4,7 +4,7 @@
   become: yes
   shell: |
     cd /data3/
-    wget --no-check-cert https://www.dropbox.com/s/kf01pr7pnnzy97t/twitter.json
+    wget --no-check-cert https://www.dropbox.com/s/d61169xe7gpisq8/twitter.json
     chmod 777 twitter.json
     curl -X POST "http://{{ user }}:{{ pass }}@{{ groups['DB_MASTER_NODE'][0] }}:5984/twitter/_bulk_docs " -H "Content-Type: application/json" -d @./twitter.json
   when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
