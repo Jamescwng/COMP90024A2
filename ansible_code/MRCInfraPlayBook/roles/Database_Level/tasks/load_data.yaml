@@ -8,6 +8,33 @@
      owner: ubuntu
      mode: '0644'
 
+- name: Copy the twitter MapReduce views from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/db-views.json
+     src: ../files/db-views.json
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+  when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
+
+- name: Copy the pollutant MapReduce views from localhost to remote server
+  ansible.builtin.copy:
+     dest: /data3/pollutant-views.json
+     src: ../files/pollutant-views.json
+     backup: no
+     owner: ubuntu
+     mode: '0644'
+  when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
+
+- name: Add twitter MapReduce views to database
+  shell: |
+    cd /data3
+    chmod 777 ./db-views.json
+    chmod 777 ./pollutant-views.json
+    curl -X PUT http://admin:admin@{{ groups['DB_MASTER_NODE'][0] }}:5984/twitter/_design/Data -d @db-views.json
+    curl -X PUT http://admin:admin@{{ groups['DB_MASTER_NODE'][0] }}:5984/pollutant/_design/Pollution -d @pollutant-views.json
+  when: ansible_ssh_host == groups['DB_MASTER_NODE'][0]
+
 #- name: Copy the data files from localhost to remote server
 #  ansible.builtin.copy:
 #     dest: /data3
