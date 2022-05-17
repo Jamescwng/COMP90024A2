@@ -1,4 +1,10 @@
-# COMP90024 Assignment 2
+# COMP90024 Assignment 2 Team 14
+
+Kranthi Kumar Kommuri 1049507
+James Ng 1316315
+Emmanuel Pinca 1080088
+Matteo Rossi 1222468
+Thanadol Ultarnpatumros 1323866
 
 ## Interactive Frontend
 
